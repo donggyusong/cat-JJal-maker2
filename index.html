@@ -37,36 +37,25 @@
         console.log("CatItem render");
 
         return( 
-          <li>
-            <img src={props.img} style={{width:"150px"}}/>
-          </li>
+          <li><img src={props.img} style={{width:"150px"}}/></li>
         )
       }
 
-      function Favorites(){
-
+      function Favorites({favorites}){
+        
         console.log("Favorites render")
+        console.log(favorites)
 
         return(
           <ul className="favorites">
-            <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-            <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn"/>
-            <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript"/>
+            {favorites.map(cat => <CatItem img={cat} key={cat}/>)}
           </ul>
         )
       }
 
-      function MainCard({img}){
+      function MainCard({img,handleHeartClick}){
 
         console.log("MainCard render")
-
-        function handleHeartClick(){
-          console.log("하트 눌렀음");
-        }
-
-        function handleHeartMouseOver(){
-          console.log("마우스 오버");
-        }
 
         return(
           <div className="main-card">
@@ -75,7 +64,7 @@
               alt="고양이"
               width="400"
             />
-            <button onClick={handleHeartClick} onMouseOver={handleHeartMouseOver}>🤍</button>
+            <button onClick={handleHeartClick}>🤍</button>
           </div>
         )
       }
@@ -105,32 +94,38 @@
 
       function App(){
 
+        console.log("App render")
+
+
         const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
         const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
         const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-
-
         const [count,setCounter] = React.useState(1);
         const [image,setImage] = React.useState(CAT1);
-       
-        console.log("App render")
-
+        const [favorites,setFavorites] = React.useState([CAT1,CAT2,CAT3]);
+        
         function handleFormSubmit(e){
             e.preventDefault();
             setCounter(count + 1);
             setImage(CAT2)
         }
 
-        //생성버튼을 누르면 MainCard의 고양이 사진을 CAT2로 바꾸자
-        //이것도 이제 값을 변경하기 위해서 state를 사용해야한다. 
+        function handleHeartClick(e){
+          e.preventDefault()
+          console.log("하트 눌렀음");
+          setFavorites([...favorites,CAT3]) //이 부분을 곰곰히 생각해보자
+        }
+
+        //하트 버튼을 눌렀을때 고양이 리스트에 고양이가 하나 더 추가되고 
+        //favorite에 고양이 이미지가 하나 더 추가되는걸 해보자
 
         return(
           <div>
             <Title>{count}번째 고양이 가라사대</Title>
             <Form handleFormSubmit={handleFormSubmit}/>
-            <MainCard img={image}/>
-            <Favorites/>
+            <MainCard img={image} handleHeartClick={handleHeartClick}/>
+            <Favorites favorites={favorites}/>
           </div>
         )
       }
