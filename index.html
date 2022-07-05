@@ -33,6 +33,9 @@
       console.log("야옹");
 
       function CatItem(props){
+
+        console.log("CatItem render");
+
         return( 
           <li>
             <img src={props.img} style={{width:"150px"}}/>
@@ -41,6 +44,9 @@
       }
 
       function Favorites(){
+
+        console.log("Favorites render")
+
         return(
           <ul className="favorites">
             <CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
@@ -51,6 +57,17 @@
       }
 
       function MainCard({img}){
+
+        console.log("MainCard render")
+
+        function handleHeartClick(){
+          console.log("하트 눌렀음");
+        }
+
+        function handleHeartMouseOver(){
+          console.log("마우스 오버");
+        }
+
         return(
           <div className="main-card">
             <img
@@ -58,16 +75,19 @@
               alt="고양이"
               width="400"
             />
-            <button>🤍</button>
+            <button onClick={handleHeartClick} onMouseOver={handleHeartMouseOver}>🤍</button>
           </div>
         )
       }
       
 
-      function Form(){  
+      function Form({handleFormSubmit}){ 
+
+        console.log("Form render")
+
           return(
-            <form>
-              <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+            <form onSubmit={handleFormSubmit}>
+              <input type="text" name="name" placeholder="영어 대사를 입력해주세요"/>
               <button type="submit">생성</button>
             </form>
           )
@@ -75,17 +95,41 @@
       
 
       function Title(props){
+        
+        console.log("Title render")
+
         return(
           <h1>{props.children}</h1>
         )
       }
 
       function App(){
+
+        const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+        const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+        const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
+
+
+        const [count,setCounter] = React.useState(1);
+        const [image,setImage] = React.useState(CAT1);
+       
+        console.log("App render")
+
+        function handleFormSubmit(e){
+            e.preventDefault();
+            setCounter(count + 1);
+            setImage(CAT2)
+        }
+
+        //생성버튼을 누르면 MainCard의 고양이 사진을 CAT2로 바꾸자
+        //이것도 이제 값을 변경하기 위해서 state를 사용해야한다. 
+
         return(
           <div>
-            <Title>1번째 고양이 가라사대</Title>
-            <Form/>
-            <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+            <Title>{count}번째 고양이 가라사대</Title>
+            <Form handleFormSubmit={handleFormSubmit}/>
+            <MainCard img={image}/>
             <Favorites/>
           </div>
         )
