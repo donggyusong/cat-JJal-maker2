@@ -53,7 +53,7 @@
         )
       }
 
-      function MainCard({img,handleHeartClick}){
+      function MainCard({img,onHeartClick}){
 
         console.log("MainCard render")
 
@@ -70,14 +70,45 @@
       }
       
 
-      function Form({handleFormSubmit}){ 
+      function Form({updateMainCat}){ 
 
         console.log("Form render")
 
+        const [values,setValues] = React.useState("");
+        const [errorMsg,setErrorMsg] = React.useState("");
+        
+        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+
+        function handleInputChange(e){
+          const userValue = e.target.value
+          setValues(userValue.toUpperCase())
+
+            setErrorMsg('');
+          if(includesHangul(userValue)===true){
+            setErrorMsg("한글은 입력할 수 없습니다.")
+          }
+        }
+
+        function handleFormSubmit(e){
+          e.preventDefault()
+          setErrorMsg('')
+          if(value===''){
+            setErrorMsg('빈 값으로 만들 수 없습니다.')
+
+            return; //updateMainCat()까지 실행되지 않고 끝낼수 있게 해주자
+          }
+          updateMainCat();
+        }
+
           return(
             <form onSubmit={handleFormSubmit}>
-              <input type="text" name="name" placeholder="영어 대사를 입력해주세요"/>
+              <input type="text" 
+                     name="name" 
+                     onChange={handleInputChange}
+                     value={values}
+                     placeholder="영어 대사를 입력해주세요"/>
               <button type="submit">생성</button>
+              <p style={{color:"red"}}>{errorMsg}</p>
             </form>
           )
       }
@@ -96,7 +127,6 @@
 
         console.log("App render")
 
-
         const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
         const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
         const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
@@ -105,7 +135,7 @@
         const [image,setImage] = React.useState(CAT1);
         const [favorites,setFavorites] = React.useState([CAT1,CAT2,CAT3]);
         
-        function handleFormSubmit(e){
+        function updateMainCat(e){
             e.preventDefault();
             setCounter(count + 1);
             setImage(CAT2)
@@ -113,18 +143,14 @@
 
         function handleHeartClick(e){
           e.preventDefault()
-          console.log("하트 눌렀음");
           setFavorites([...favorites,CAT3]) //이 부분을 곰곰히 생각해보자
         }
-
-        //하트 버튼을 눌렀을때 고양이 리스트에 고양이가 하나 더 추가되고 
-        //favorite에 고양이 이미지가 하나 더 추가되는걸 해보자
 
         return(
           <div>
             <Title>{count}번째 고양이 가라사대</Title>
-            <Form handleFormSubmit={handleFormSubmit}/>
-            <MainCard img={image} handleHeartClick={handleHeartClick}/>
+            <Form updateMainCat={updateMainCat}/>
+            <MainCard img={image} onHeartClick={handleHeartClick}/>
             <Favorites favorites={favorites}/>
           </div>
         )
